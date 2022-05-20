@@ -24,7 +24,7 @@ function Verification () {
         )
         .then ((resp) => {
             dispatch({type: 'LOADING_END'})
-            setMessage(<b>Your account has been verified.<br/>Please wait, we will direct you to Moment Home Page automatically.</b>)
+            setMessage(<b>Your account has been verified.<br/>Please wait, we will direct you to Moment Page automatically.</b>)
             console.log(`respond:`, resp);
             
             setTimeout(() => navigate('/'), 3000)
@@ -32,8 +32,6 @@ function Verification () {
         .catch((err) => {
             dispatch({type: 'LOADING_END'})
             console.log(`error:`, err);
-            setMessage(<b>{err.response.data}</b>)
-            setTimeout(() => navigate('/'), 2000)
         })
     }, [])
     

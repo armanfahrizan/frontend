@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import {Routes, Route} from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
-import { Box } from "@chakra-ui/react";
 
 
 //components
@@ -15,7 +14,6 @@ import Start from "./pages/start";
 import Home from '../src/pages/home'
 import Profile from "./pages/profile";
 import Verification from "./pages/verification";
-import ResendToken from "./pages/resend-token";
 import ResetPassword from "./pages/reset-password";
 
 import { GET_USER_DATA } from "./redux/actions/types";
@@ -26,6 +24,19 @@ function Main () {
     console.log(`loading at MainApp:`, loading);
     const dispatch = useDispatch()
     const token = localStorage.getItem("token")
+    
+    useEffect(()=> {
+        axios.get(API_URL + '/keep/login', 
+            { headers: {"authToken": token}})
+        .then((resp) => {
+            console.log(`respond when keep login:`, resp.data);
+            dispatch({type: GET_USER_DATA, payload: resp.data})
+        })
+        .catch((err) => {
+            console.log(`error when keep login:`, err);
+        })
+      }, [])
+    
     
     return (
         token ?
@@ -41,6 +52,7 @@ function Main () {
                 <Route path='/' element={<Start/>}/>
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/profile" element={<Profile/>}/>
+                <Route path='/verify/:token/verify/:userId' element={<Verification />} />
             </Routes>
             <Routes>
                 <Route path="/home" element={<Footer/>}/>
@@ -49,11 +61,12 @@ function Main () {
                 <Route path="/friend" element={<Footer/>}/>
             </Routes>
         </div>
+
         :
+
         <div>
             <Loading onLoading={loading}/>
             <Routes>
-                <Route path='/resend/:token' element={<ResendToken/>} />
                 <Route path='/verify/:token/verify/:userId' element={<Verification />} />
                 <Route path='/' element={<Start/>}/>
                 <Route path='/reset/:userId/reset/:email' element={<ResetPassword/>} />

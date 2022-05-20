@@ -1,11 +1,11 @@
-import React, {useState} from "react";
-import { useSelector } from "react-redux";
+import React, {useEffect} from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Text, Button, Box, Image, Textarea} from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { Flex, Text, Button, Box, Image} from "@chakra-ui/react";
 
 
 //import image
-import profileUser1 from '../assets/profile-1.jpg'
+import profileUser1 from '../assets/profile-default.jpg'
 import homeLogo from '../assets/Home logo.png'
 import profileLogo from '../assets/Profile Logo.png'
 import albumLogo from '../assets/Album Logo.png'
@@ -14,14 +14,17 @@ import newsLogo from '../assets/News Logo.png'
 
 
 function Left() {
-    const user = useSelector((state) => state.user)
     const navigate = useNavigate()
-    // const [profile, setProfile] = useState(null)
     
-    // const baseUrlImage = ``
+    const user = useSelector((state) => state.user)
+    const profilepicture = user.profilepicture
+    const fullname = user.fullname 
+    const email = user.email 
+    const bio = user.bio 
+  
 
     const onChangePicture = () => {
-        console.log("ganti profile");
+        navigate('/profile')
     }
 
     const onHomeButton = () => {
@@ -38,42 +41,48 @@ function Left() {
 
     return (
         <Flex 
-            w="40vw"
+            w="30vw"
             direction={"column"} 
             borderTop={"2px"} 
             borderColor="blackAlpha.600" 
-            bgColor={"gray.100"}
+            bgColor={"orange.300"}
         >
-            <Flex h="45vh">
+            <Flex h="40vh">
                 <Image 
-                    p="5px" 
-                    w="40vw" 
-                    src={user.profilepicture} 
+                    p="5px"
+                    h="35vh" 
+                    w="45%"
+                    src={profilepicture? profilepicture : profileUser1} 
                     cursor="pointer" 
-                    onClick={onChangePicture} 
+                    onClick={onChangePicture}
+                    opacity={profilepicture? "100%" : "40%"}
                 />
-                <Flex w="60vw" direction={"column"}>
-                    <Box h="30vh" >
+                <Flex w="55%" direction={"column"}>
+                    <Box h="25vh" >
                         <Text 
                             fontSize={"2xl"} 
-                            p="10px 0px 0px 12px"
-                        > {user.fullname}</Text>
+                            p="5px 0px 0px 5px"
+                        > {fullname}</Text>
                     </Box>
                     <Box 
-                        h="10vh" 
+                        h="5vh" 
                         borderBottom={"1px solid"} 
                         borderBottomColor="blackAlpha.200"
+                        pt="9px"
                     >
-                        <Text pl="12px"> {user.email} </Text>
+                        <Text pl="5px" fontSize={"13px"}>{email} </Text>
                     </Box>
-                    <Box h="50vh" pl="12px" pr="8px" > Bio:  
-                        <Box h="90%" borderRadius="10"> {user.bio}</Box>
+                    <Box h="180px" pl="5px" pr="8px" fontSize={"xl"} > Bio:  
+                        <Text 
+                            h="140px" 
+                            fontSize={"12px"} 
+                        >{bio}</Text>
                     </Box>
                 </Flex>
             </Flex>
             <Box 
-                m="10px 60px" 
-                h="70vh" 
+                m="28px 60px" 
+                h="60%" 
                 direction={"column"} 
                 border={"2px solid #2c3e50"} 
                 borderBottom={"0px solid #2c3e50"} 
@@ -98,7 +107,7 @@ function Left() {
                     HOME
                     </Button>
                 </Flex>
-                <Flex h="25%" mb="-9px">
+                <Flex h="25%" mb="-10px">
                     <Button 
                         color="black" 
                         colorScheme={"twitter"} 

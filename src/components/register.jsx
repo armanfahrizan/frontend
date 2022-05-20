@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import {
   Flex,
@@ -17,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 
 //import actions
-import {addNewUser, loginUser} from '../redux/actions/user-actions'
 import { LOADING_END, LOADING_START } from "../redux/actions/types";
 
 //import image
@@ -25,6 +24,7 @@ const API_URL = process.env.REACT_APP_API_URL
 
 
 function Registration ({onCreateClose}) {
+    const loading = useSelector((state) => state.loading.loading)
     const [see, setSee] = useState(false)
     const showRegisterPassword = () => setSee(!see)
     const dispatch = useDispatch()
@@ -44,27 +44,26 @@ function Registration ({onCreateClose}) {
           password: regPassword.current.value,
           repassword: regRepassword.current.value
         }
-        console.log(`body on register:`, bodyOnReg);
     
         dispatch({type: LOADING_START})
         await axios.post(API_URL + '/user/register', bodyOnReg)
         .then((resp) => {
           console.log(`respond on register:`, resp);
           dispatch({type: LOADING_END})
-          // regFullname.current.value = ""
+          regFullname.current.value = ""
           regUsername.current.value = ""
-          // regEmail.current.value = ""
-          // regPassword.current.value = ""
-          // regRepassword.current.value = ""
+          regEmail.current.value = ""
+          regPassword.current.value = ""
+          regRepassword.current.value = ""
           
-          onCreateClose()
           toast({
-            title: "Registration Success",
-            description: resp.data,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          })
+              title: "Registration Success",
+              description: resp.data,
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            })
+            onCreateClose()
         })
         .catch((err) => {
           console.log(`error on register:`, err);
@@ -143,7 +142,7 @@ function Registration ({onCreateClose}) {
                             placeholder="Input Password here"
                             m="2px 0px 0px 30px"
                             w="32vw"
-                            type={see? "password" : "text"}
+                            type={see? "text" : "password"}
                             border={"2px solid"}
                             borderColor="whiteAlpha.600"
                             ref={regPassword}
@@ -156,7 +155,7 @@ function Registration ({onCreateClose}) {
                             placeholder="Input Password Confirmation here"
                             m="2px 0px 0px 30px"
                             w="32vw"
-                            type={see? "password" : "text"}
+                            type={see? "text" : "password"}
                             border={"2px solid"}
                             borderColor="whiteAlpha.600"
                             ref={regRepassword}
@@ -172,7 +171,7 @@ function Registration ({onCreateClose}) {
                   color={"whiteAlpha.800"}
                   ml="27vw"
                   >
-                    {see ? "Show Password" : "Hide Password"}
+                    {see ? "Hide Password" : "Show Password"}
                 </Button>
                 <Text textAlign={"center"}>
                 <Button
@@ -182,6 +181,7 @@ function Registration ({onCreateClose}) {
                     bgColor="orange.400"
                     border="2px"
                     color="blue.900"
+                    disabled={loading}
                     >
                     Register
                 </Button>

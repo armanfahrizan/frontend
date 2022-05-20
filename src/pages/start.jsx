@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch} from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import {
   Flex,
@@ -14,18 +13,18 @@ import {
   FormHelperText,
   FormControl,
   Slide,
-  CloseButton,
   InputGroup,
   useToast
 } from "@chakra-ui/react";
 
 //import redux
+import { useDispatch} from "react-redux";
 import { LOADING_END, LOADING_START } from "../redux/actions/types";
-import {addNewUser, loginUser} from '../redux/actions/user-actions'
 
 //import components
 import Registration from "../components/register";
 import Reset from "../components/forgot-password";
+import ResendToken from "../components/resend-token";
 
 //import image
 import logo from "../assets/Logo.png";
@@ -34,6 +33,7 @@ const API_URL = process.env.REACT_APP_API_URL
 function Start() {
   const [createOpen, setCreateOpen] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [resendOpen, setResendOpen] = useState(false);
   const [show, setShow] = useState(false)
   const showLoginPassword = () => setShow(!show)
   const dispatch = useDispatch()
@@ -52,8 +52,11 @@ function Start() {
     dispatch({type: LOADING_START})
     await axios.post(API_URL + '/user', bodyOnLogin)
     .then((resp) => {
-      const token = resp.headers["authtoken"].split(" ")[1]
+      const arr = resp.headers["authtoken"].split(" ")
+      const token = arr[1]
+      const userId = arr[2]
       localStorage.setItem("token", token)
+      localStorage.setItem("userId", userId)
 
       dispatch({type: LOADING_END})
       toast({
@@ -101,6 +104,14 @@ function Start() {
   const forgotCloseButton = () => {
     setForgotOpen(false);
   };
+
+  const onResendOpen = () => {
+    setResendOpen(true);
+  };
+  const resendCloseButton = () => {
+    setResendOpen(false);
+  };
+
   return (
     <Flex w="100vw" h="100vh" direction={"row-reverse"}>
       <Box w="45vw" bgColor={"#fcfafa"} borderLeft="3px solid #a6a6a6">
@@ -208,11 +219,11 @@ function Start() {
             <Text fontWeight="bold" textAlign={"center"} alignSelf="center" m="0px 15px">Or</Text>
             <Button
               m="5px 0px"
-              onClick={""}
+              onClick={onResendOpen}
               variant={"link"}
               colorScheme="orange"
             >
-              Not verified account?
+              Link verification expired?
             </Button>
             </Flex>
           </Text>
@@ -241,6 +252,12 @@ function Start() {
         in={forgotOpen}
       >
         <Reset onButtonClose={() => forgotCloseButton()}/>
+      </Slide>
+      <Slide
+        direction="left"
+        in={resendOpen}
+      >
+        <ResendToken onResendClose={() => resendCloseButton()}/>
       </Slide>
     </Flex>
   );

@@ -19,28 +19,11 @@ import { MdLogout, MdSearch } from "react-icons/md";
 import logo from "../assets/Logo.png";
 import { GET_USER_DATA, DELETE_USER_DATA } from "../redux/actions/types";
 
-const API_URL = process.env.REACT_APP_API_URL
 function Navbar() {
-  const navigate = useNavigate ()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
-  const token = localStorage.getItem("token")
   
-  useEffect(()=> {
-    axios.get(API_URL + '/keep/login', 
-    { headers: {"authToken": token}})
-    .then((resp) => {
-        console.log(`keep login respond:`, resp.data);
-        dispatch({type: GET_USER_DATA, payload: resp.data})
-    })
-    .catch((err) => {
-        console.log(`keep login error:`, err);
-    })
-
-}, [])
-  
-  
-  
-  const onButtonLogout = () => {
+   const onButtonLogout = () => {
     return (
       localStorage.removeItem("token"),
       dispatch({type: DELETE_USER_DATA}),
@@ -55,7 +38,7 @@ function Navbar() {
         <Image
           position={"static"}
           ml="20px"
-          mt="1px"
+          mt="2px"
           boxSize="53px"
           objectFit="cover"
           src={logo}
